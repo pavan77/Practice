@@ -14,11 +14,11 @@ import javax.imageio
 import javax.imageio.ImageIO
 import java.io.IOException
 import java.awt.image.BufferedImage
-
 object Main extends App {
 
   //case class A(i: Int) {
-  //val time = System.currentTimeMillis()
+
+    //val time = System.currentTimeMillis()
   //}
 
   //val pool: Option[GenericObjectPool[A]] = None
@@ -29,16 +29,17 @@ object Main extends App {
 
     def readLockTaken = rLocks == 0
     var writeLockTaken = false
-    def getLock(lType: Char) = this.synchronized {
-      if (lType == 'R') {
-        while (writeLockTaken) wait
-        rLocks = rLocks + 1
-      } else {
-        while (readLockTaken || writeLockTaken) wait
-        writeLockTaken = true
+    def getLock(lType: Char) =
+      this.synchronized {
+        if (lType == 'R') {
+          if (writeLockTaken) wait
+          rLocks = rLocks + 1
+        } else {
+          if (readLockTaken || writeLockTaken) wait
+          writeLockTaken = true
+        }
+        notify
       }
-      notify
-    }
 
     def releaselock(lType: Char) = this.synchronized {
       if (lType == 'R') {
@@ -57,7 +58,7 @@ object Main extends App {
     }
   }
 
-  //  startPrinting
+  startPrinting
   def startPrinting = {
     val ra = (1 to 50)
     ra.foreach(i => {
@@ -67,7 +68,14 @@ object Main extends App {
     })
   }
 
-  //  println(getPermutations("aa"))
+
+  def position(s: String, c: Char) = {
+    val ra = -1 to s.length - 1
+    ra.map { i =>
+      println(i)
+      s.substring(0, i + 1) + c + s.substring(i + 1)
+    }.toList
+  }
 
   //abc
 
